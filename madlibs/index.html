@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>MADLIBS</title>
+
+    <!-- load stylesheets -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400">  <!-- Google web font "Open Sans" -->
+    <link rel="stylesheet" href="font-awesome-4.5.0/css/font-awesome.min.css">                <!-- Font Awesome -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">                                      <!-- Bootstrap style -->
+    <link rel="stylesheet" href="css/stylesheet.css">                                   <!-- Templatemo style -->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+          <![endif]-->
+</head>
+<script src="https://unpkg.com/compromise@latest/builds/compromise.min.js"></script>
+<script src='https://code.responsivevoice.org/responsivevoice.js'></script>
+<script type="text/JavaScript">
+let iter;
+let currword;
+var doc;
+let requestURL = "https://raw.githubusercontent.com/JoelLaceyQA95/christmas/master/songs1.json";
+let requestSecond = new XMLHttpRequest();
+let title = "";
+let body = "";
+let indexes = [];
+requestSecond.open("GET", requestURL);
+requestSecond.responseType = "json";
+requestSecond.send();
+requestSecond.onload = function () {
+    var songs = requestSecond.response;
+   title =songs[0]["title"];
+   body =songs[0]["body"];
+     doc = nlp(body);
+     wordStuff();
+}
+
+var myMap = new Map();
+
+
+function wordStuff(){
+  var adjs = doc.adjectives().out('text');
+  var adverbs = doc.adverbs().out('text');
+  var nouns = doc.nouns().out('text');
+  var a =nouns.split(" ").concat(adverbs.split(" ").concat(adjs.split(" ")));
+  var num =  16;//Math.random() * (16 - 8) + 8;
+for (let x=0; x<num; x++){
+  var idx =(Math.floor(Math.random() * a.length));
+  var type = "";
+  if(a[idx]!= ""){
+  if (adjs.indexOf(a[idx])!=-1){type = "adjective";}
+  else if (adverbs.indexOf(a[idx])!=-1){type = "adverb";}
+  else if (nouns.indexOf(a[idx])!=-1){type = "noun";}
+  myMap.set(a[idx], type);
+  }
+
+  
+}
+iter = myMap.keys();
+currword = iter.next().value;
+
+console.log(myMap);
+}
+
+
+
+
+function replaceWith(original, replacement){ 
+  while(body.indexOf(" "+original+" ", 0)!=-1){
+  body = body.replace(" "+original+ " "," "+ replacement + " ");
+ }
+}
+
+
+	let check = true;
+            let wordsArray = [];
+           // let replacementOrder = ["adjective", "noun"];
+            function enterWords(){
+                if(check){
+                let inputBox = document.createElement("input");
+                inputBox.setAttribute("type", "text");
+                inputBox.setAttribute("placeholder", "enter an " + myMap.get(currword));
+                inputBox.id = "inputBox";
+                document.body.appendChild(inputBox);
+                let submit = document.createElement("input");
+                submit.setAttribute("type", "button");
+                submit.setAttribute("value", "Submit");
+                submit.setAttribute("onclick", "submitWord(inputBox.value);")
+                document.body.appendChild(submit);
+				check = false;
+            	}
+			}
+
+            function submitWord(word){
+                // adds word to story
+                if(myMap.get(currword) != null){
+                replaceWith(currword, word);
+
+                inputBox.value = "";
+                currword = iter.next().value;
+                inputBox.setAttribute("placeholder", "enter an " + myMap.get(currword));
+            }else{
+
+                //display
+                //console.log(body);
+				document.getElementById("marq").innerHTML = body;
+				responsiveVoice.speak(body);
+            }
+
+
+            }
+       </script>
+
+<body class="tm-bg-img-content">
+	<audio autoplay hidden loop>
+		<source src="resources/carol-of-the-bells.wav" type = "audio/wav">
+	</audio>
+	
+
+
+
+    <div class="tm-bg-img-header">
+        <div class="container-fluid">
+            
+            <div id="top" class="tm-header-container">
+                
+                <!-- 1. Site Header -->
+                <div class="row tm-site-header">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-xs-center">
+
+                        <h1 class="tm-site-title">MADLIBS</h1>
+                    
+                    </div>
+                </div>
+
+ 
+				<input type="button" onclick="enterWords()" " value="Start Madlib">
+				
+				<div class="tm-2-col-text">
+					<p></p>
+					<p></p>
+					<p></p>
+                        <p class="tm-2-col-text-description" style="background-color: rgba(184, 209, 249, 0.18);">
+							<marquee id = "marq" behavior="scroll" direction="up" style = "text-align: center; height: 200px;">
+								
+							</marquee>
+						</p>
+                </div>
+				
+				<footer class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-xs-center">
+                    <p class="tm-copyright-text">Copyright &copy; 2017 RUDE-OLF</p>
+                </footer>
+
+            </div> <!-- .tm-header-container -->
+        </div> <!-- container-fluid -->               
+    </div> <!-- tm-bg-img-header -->
+        
+    <!-- load JS files -->
+    <script src="js/jquery-1.11.3.min.js"></script>     
+    <script src="js/jquery.singlePageNav.min.js"></script>
+
+    <script>
+        function prepareMenuForDesktop() {
+
+            var navbarHeight = 0;
+            
+            // For screens greater than 767
+            if($(window).width() > 767) {
+
+                // target at which the menu bar changes to sticky
+                var target = $("#tm-section-1").offset().top - 100;
+
+                // window scroll
+                $(window).scroll(function(){
+
+                    if($(this).scrollTop() > target) {                            
+                        $(".tm-navbar-row").addClass("sticky");                            
+                    }
+                    else {
+                        $(".tm-navbar-row").removeClass("sticky");
+                    }     
+
+                }); 
+
+                navbarHeight = 56;
+            }
+
+            // Single Page Nav
+            $('#tmNavbar').singlePageNav({
+               'currentClass' : "active",
+                offset : navbarHeight,
+                'filter': ':not(.external)'
+            });  
+        }  
+   
+        $(document).ready(function(){                 
+
+            prepareMenuForDesktop();
+
+            // On window resize, prepare menu
+            $(window).resize(function(){
+                prepareMenuForDesktop();                 
+                                  
+            });       
+        });
+
+    </script>             
+
+</body>
+</html>
